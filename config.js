@@ -1,11 +1,12 @@
 module.exports = {
+    DEEPSEEK_API_KEY: "sk-f2f4b7786835465b8ed234f92fde9980",
     BOT_MESSAGES: {
-        PRESENTATION: "😊*Hola* Soy Mr.Max Tu bot profesor de inglés🗽.",
-        AUTHORIZATION: "Necesito tu autorización🤳 para poder continuar con el *modo PRO*🎖️.  Si *aceptas* escríbeme tu numero actual de whatsapp(9********)",
-        REJECT: "Si no😔, solo escribe: *NO. GRACIAS* ",
-        DECISION: "*HAS TOMADO UNA GRAN DECISION!👩🎓👨🎓*",
-        WELCOME: "Hola 👋, hoy y ahora empieza tu camino hacia un gran futuro bilingue. Por favor, pon mucho esfuerzo y cumple con los objetivos diarios, se te dará mucho ejercicios: 🗣️speaking, ✍️writting,🎞️imagenes,📹videos,🎧audios,etc. Siempre estaremos de tu lado! ",
-        NAME_REQUEST: "What's your name(Como te llamas)?",
+        PRESENTATION: "😊 *¡Hola!* Soy Mr.Max, tu profesor de inglés personal 🗽🎓. ¡Estoy aquí para que hables inglés como un profesional! 🚀",
+        AUTHORIZATION: "Antes de empezar esta aventura *modo PRO* 🎖️, necesito tu autorización 🤳. Si estás listo, escríbeme tu número de WhatsApp actual (ej: 9********) 📲.",
+        REJECT: "Si prefieres dejarlo para después 😔, simplemente escribe: *NO. GRACIAS* 👋",
+        DECISION: "✨ *¡HAS TOMADO UNA GRAN DECISIÓN!* 👨‍🎓👩‍🎓✨",
+        WELCOME: "¡Hola! 👋 Hoy comienza tu camino hacia un futuro bilingüe brillante 🌟. Por favor, pon mucho esfuerzo y cumple con los objetivos diarios. Tendremos de todo: 🗣️ speaking, ✍️ writing, 🎞️ imágenes, 🎧 audios y mucho más. ¡Mr. Max siempre estará a tu lado! 💪🔥",
+        NAME_REQUEST: "First things first... *What's your name?* (¿Cómo te llamas?) ✍️😊",
     },
     RESPUESTAS_FEEDBACK: {
         CORRECTO: ["Muy bien, esto es poco para ti😃", "Excelente, no me sorprende que lo hayas hecho bien😊😁"],

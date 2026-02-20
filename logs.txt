@@ -1,0 +1,13 @@
+[ExcelService] Error leyendo archivo: End of data reached (data length = 0, asked index = 4). Corrupted zip ?
+[ExcelService] Archivo corrupto detectado. Borrando /app/clientes.xlsx
+[StateManager] Mensaje de 73955192897574: "hola" | Estado actual: NUEVO
+[ExcelService] saveCliente(73955192897574) -> Estado: WAITING_AUTH
+[StateManager] Usuario 73955192897574 registrado con estado WAITING_AUTH
+[ExcelService] getCliente(73955192897574) -> No encontrado
+[StateManager] Mensaje de 73955192897574: "956469717" | Estado actual: NUEVO
+[ExcelService] saveCliente(73955192897574) -> Estado: WAITING_AUTH
+[StateManager] Usuario 73955192897574 registrado con estado WAITING_AUTH
+{"level":30,"time":"2026-02-20T15:26:49.513Z","pid":19,"hostname":"dca6e4d5e348","class":"baileys","histNotification":{"fileSha256":"uYqYRSiHZ55D14tydsTYTLePQHLjF4/QTm7+8d0XdUI=","fileLength":"728513","mediaKey":"Cqubil922v+KxAQUNxZxWxSyTWReiqKEnsSHZExNtJM=","fileEncSha256":"ZbvdWz9qf+SNqaUvJ+b2pu2csrUccR305ltLaIP6m58=","directPath":"/v/t62.31111-24/597323462_25561189000247387_2345398878352470368_n.enc?ccb=11-4&oh=01_Q5Aa3wFlKUQGyyL72RHmRZ9loxuCcTZgkH3KB9TPjxJw5GMU2g&oe=69BFD207&_nc_sid=5e03e0","syncType":"FULL","chunkOrder":4,"progress":24,"oldestMsgInChunkTimestampSec":"1762462876","encHandle":"AQJhbzKwJGDr1E33phU9GsPrRnQSxgdqVjwt_2xz0NtIevhP4s4RFiiW5bWzLTIYgxBQgcsCAOraJFLgByqwQ1mFirF7i6nhKxtllKT_--kcp6I1QugJszRnZqDnhxShbxw"},"process":true,"id":"AC7D9F5ECCE618B6C358FFFB6135AF12","isLatest":false,"msg":"got history notification"}
+
+73955192897574
+73955192897574
