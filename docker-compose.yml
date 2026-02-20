@@ -1,0 +1,10 @@
+services:
+  bot:
+    build: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./auth_info_baileys:/app/auth_info_baileys
+    environment:
+      - NODE_ENV=production
+    restart: always

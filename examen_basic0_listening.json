@@ -1,0 +1,52 @@
+{
+    "What is your name?": [
+        "Red",
+        "Carlos",
+        "Lima"
+    ],
+    "Where are you from?": [
+        "Luis",
+        "Perú",
+        "Dog"
+    ],
+    "How old are you?": [
+        "20",
+        "green",
+        "Callao"
+    ],
+    "What is your favorite color?": [
+        "Eye",
+        "Blue",
+        "Lima"
+    ],
+    "what is PENCIL": [
+        "Lápiz",
+        "Mesa",
+        "Silla"
+    ],
+    "what is BOOK": [
+        "Libro",
+        "Mesa",
+        "Silla"
+    ],
+    "what is TABLE": [
+        "Mesa",
+        "Libro",
+        "Silla"
+    ],
+    "what is CHAIR": [
+        "Silla",
+        "Libro",
+        "Mesa"
+    ],
+    "what is PEN": [
+        "Lapicero",
+        "Libro",
+        "Mesa"
+    ],
+    "what is GLASS": [
+        "Vaso",
+        "Libro",
+        "Mesa"
+    ]
+}

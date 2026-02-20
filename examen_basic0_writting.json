@@ -1,0 +1,64 @@
+{
+    "traduce las siguientes palabras a inglés": {
+        "hola": "hello",
+        "adiós": "goodbye",
+        "por favor": "please",
+        "gracias": "thank you"
+    },
+    "¿Que significa las siguientes palabras?": {
+        "name": "nombre",
+        "age": "edad",
+        "city": "ciudad",
+        "country": "país",
+        "friend": "amigo",
+        "teacher": "profesor",
+        "student": "estudiante",
+        "school": "escuela",
+        "house": "casa",
+        "book": "libro"
+    },
+    "¿Cuales son los pronombres personales en Inglés?": {
+        "yo": [
+            "Messy",
+            "They",
+            "I",
+            "Bonjour"
+        ],
+        "Tú": [
+            "We",
+            "You",
+            "Her",
+            "She"
+        ],
+        "él": [
+            "He",
+            "His",
+            "Him",
+            "yes"
+        ],
+        "ella": [
+            "She",
+            "Her",
+            "Hers",
+            "no"
+        ],
+        "ello": [
+            "It",
+            "Its",
+            "It",
+            "maybe"
+        ],
+        "nosotros": [
+            "We",
+            "Our",
+            "Us",
+            "yes"
+        ],
+        "ellos": [
+            "They",
+            "Their",
+            "Them",
+            "maybe"
+        ]
+    }
+}
