@@ -1,6 +1,10 @@
+const config = require('./config');
+const excelService = require('./excelService');
 const fs = require('fs');
 const path = require('path');
 const aiService = require('./aiService');
+const transcriptionService = require('./transcriptionService');
+const { downloadMediaMessage } = require('@whiskeysockets/baileys');
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -17,11 +21,44 @@ class StateManager {
     async handleMessage(sock, msg) {
         const jid = msg.key.remoteJid;
         const phone = jid.split('@')[0];
-        const text = (msg.message.conversation || msg.message.extendedTextMessage?.text || "").trim();
-        if (!text) return;
+        const messageType = Object.keys(msg.message || {})[0];
+        let text = (msg.message.conversation || msg.message.extendedTextMessage?.text || "").trim();
+        const isAudio = messageType === 'audioMessage';
+
+        // Si es audio, intentamos "escucharlo" (descargar y simular transcripción)
+        if (isAudio) {
+            console.log(`[StateManager] 🎙️ Audio detectado de ${phone}. Procesando...`);
+            try {
+                const buffer = await downloadMediaMessage(msg, 'buffer', {});
+                const fileName = `audio_${phone}_${Date.now()}.ogg`;
+                const filePath = path.join(__dirname, 'temp_audios', fileName);
+
+                // Asegurar que la carpeta existe
+                if (!fs.existsSync(path.join(__dirname, 'temp_audios'))) {
+                    fs.mkdirSync(path.join(__dirname, 'temp_audios'));
+                }
+
+                fs.writeFileSync(filePath, buffer);
+                console.log(`[StateManager] ✅ Audio guardado en: ${filePath}`);
+
+                // Transcripción automática
+                const transcription = await transcriptionService.transcribe(filePath);
+                if (transcription) {
+                    text = transcription;
+                    console.log(`[StateManager] 👂 Transcripción: "${text}"`);
+                } else {
+                    text = "[Error de transcripción]";
+                }
+            } catch (err) {
+                console.error(`[StateManager] Error procesando audio: ${err.message}`);
+            }
+        }
+
+        // Si no hay texto ni audio, ignoramos
+        if (!text && !isAudio) return;
 
         let cliente = await excelService.getCliente(phone);
-        console.log(`[StateManager] Mensaje de ${phone}: "${text}" | Estado actual: ${cliente ? cliente.estado : 'NUEVO'}`);
+        console.log(`[StateManager] Mensaje de ${phone}: "${text || '[AUDIO]'}" | Estado actual: ${cliente ? cliente.estado : 'NUEVO'}`);
 
         if (!cliente) {
             await this.sendMessage(sock, jid, config.BOT_MESSAGES.PRESENTATION);
@@ -46,12 +83,32 @@ class StateManager {
                     await this.sendMessage(sock, jid, "Entendido. Si cambias de opinión, aquí estaré.");
                     cliente.estado = 'START';
                 } else if (/^\d{9}$/.test(text)) {
-                    cliente.value = text;
-                    cliente.estado = 'WAITING_NAME';
-                    await this.sendMessage(sock, jid, config.BOT_MESSAGES.DECISION);
-                    await this.sendMessage(sock, jid, config.BOT_MESSAGES.WELCOME);
-                    await this.sendMessage(sock, jid, `Tu codigo de pago es: ${text}`);
-                    await this.sendMessage(sock, jid, config.BOT_MESSAGES.NAME_REQUEST);
+                    const originalPN = `51${text}`;
+                    console.log(`[StateManager] Buscando progreso previo para ${originalPN}...`);
+
+                    // Buscar si existe un registro antiguo con ese número como KEY
+                    const oldCliente = await excelService.getCliente(originalPN);
+
+                    if (oldCliente && oldCliente.key !== phone) {
+                        console.log(`[StateManager] ¡Registro previo encontrado! Fusionando datos para ${phone}`);
+                        await this.sendMessage(sock, jid, "✨ ¡Bienvenido de nuevo! He encontrado tu progreso anterior. 🛡️🦾");
+
+                        // Fusionar datos del antiguo al nuevo
+                        cliente.nombre = oldCliente.nombre;
+                        cliente.nivel = oldCliente.nivel;
+                        cliente.estado = oldCliente.estado;
+                        cliente.progreso = oldCliente.progreso;
+                        cliente.value = text;
+
+                        await this.sendMessage(sock, jid, `Continuemos justo donde te quedaste, *${cliente.nombre || 'estudiante'}*. 🗽🎓`);
+                    } else {
+                        cliente.value = text;
+                        cliente.estado = 'WAITING_NAME';
+                        await this.sendMessage(sock, jid, config.BOT_MESSAGES.DECISION);
+                        await this.sendMessage(sock, jid, config.BOT_MESSAGES.WELCOME);
+                        await this.sendMessage(sock, jid, `Tu codigo de pago es: ${text}`);
+                        await this.sendMessage(sock, jid, config.BOT_MESSAGES.NAME_REQUEST);
+                    }
                 }
                 break;
 
@@ -208,25 +265,46 @@ class StateManager {
 
     async handleSpeakingExam(sock, jid, phone, msg, cliente) {
         const ctx = this.userContext[phone];
-        // En un bot real aqui procesariamos el audio.
-        ctx.correct++;
-        ctx.speakingIndex++;
+        const messageType = Object.keys(msg.message || {})[0];
+        const isAudio = messageType === 'audioMessage';
 
-        if (ctx.speakingIndex < examSpeaking.length) {
-            await this.sendSpeakingPhrase(sock, jid, phone, cliente.nombre);
+        if (isAudio) {
+            console.log(`[StateManager] Audio recibido de ${phone} para examen de Speaking`);
+
+            // Si el texto vino de la transcripción en handleMessage
+            const transcript = text;
+            const expected = examSpeaking[ctx.speakingIndex].replace("{nombre del cliente}", cliente.nombre);
+
+            if (!transcript || transcript === "[Error de transcripción]") {
+                await this.sendMessage(sock, jid, "❌ Lo siento, no pude procesar tu audio claramente. ¿Podrías repetirlo? 🎙️");
+                return;
+            }
+
+            // Evaluación de pronunciación (con marcas ~, ```)
+            const evaluation = await aiService.evaluatePronunciation(expected, transcript);
+            await this.sendMessage(sock, jid, `🎙️ *Tu pronunciación:* \n${evaluation}`);
+
+            ctx.correct++;
+            ctx.speakingIndex++;
+
+            if (ctx.speakingIndex < examSpeaking.length) {
+                await this.sendSpeakingPhrase(sock, jid, phone, cliente.nombre);
+            } else {
+                cliente.estado = 'EXAM_LISTENING';
+                this.userContext[phone] = {
+                    listeningIndex: 0,
+                    correct: 0,
+                    wrong: 0,
+                    writingResults: ctx.writingResults,
+                    speakingResults: [ctx.correct, ctx.wrong],
+                    listeningKeys: Object.keys(examListening)
+                };
+                await this.sendMessage(sock, jid, "Ahora la última parte del examen ✍️ ¡Vamos! ¡No te rindas! 🔥");
+                await this.sendMessage(sock, jid, "Tienes 10 segundos para escoger la alternativa correcta, presta atención a lo que oyes y responde correctamente. 🎧");
+                await this.sendListeningQuestion(sock, jid, phone);
+            }
         } else {
-            cliente.estado = 'EXAM_LISTENING';
-            this.userContext[phone] = {
-                listeningIndex: 0,
-                correct: 0,
-                wrong: 0,
-                writingResults: ctx.writingResults,
-                speakingResults: [ctx.correct, ctx.wrong],
-                listeningKeys: Object.keys(examListening)
-            };
-            await this.sendMessage(sock, jid, "Ahora la última parte del examen ✍️¡Vamos!¡No te rindas!");
-            await this.sendMessage(sock, jid, "Tienes 10 segundos para escoger la alternativa correcta, presta atención a lo que oyes y responde correctamente.");
-            await this.sendListeningQuestion(sock, jid, phone);
+            await this.sendMessage(sock, jid, "Por favor, envíame un mensaje de voz (audio)🎙️ con la frase para poder evaluarte.");
         }
     }
 
