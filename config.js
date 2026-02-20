@@ -1,5 +1,6 @@
 module.exports = {
     DEEPSEEK_API_KEY: "sk-f2f4b7786835465b8ed234f92fde9980",
+    ASSEMBLY_AI_API_KEY: "c2af84d71f8746e2a41f227346deedda",
     BOT_MESSAGES: {
         PRESENTATION: "😊 *¡Hola!* Soy Mr.Max, tu profesor de inglés personal 🗽🎓. ¡Estoy aquí para que hables inglés como un profesional! 🚀",
         AUTHORIZATION: "Antes de empezar esta aventura *modo PRO* 🎖️, necesito tu autorización 🤳. Si estás listo, escríbeme tu número de WhatsApp actual (ej: 9********) 📲.",

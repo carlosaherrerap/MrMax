@@ -51,6 +51,27 @@ Responde ÚNICAMENTE con la palabra "SÍ" o "NO".`;
 
         return await this.askAI(prompt);
     }
+
+    async evaluatePronunciation(expected, transcript) {
+        const prompt = `
+Frase esperada: "${expected}"
+Transcripción de voz: "${transcript}"
+
+Tu tarea es evaluar la pronunciación comparando ambas. 
+Genera la frase original marcando las palabras según la transcripción:
+1. Si una palabra se pronunció MAL (o no se entiende/sustituida por otra distinta), rodéala con tildes: ~palabra~
+2. Si una palabra se pronunció REGULAR (similar pero con errores leves de confianza), rodéala con tres comillas: \`\`\`palabra\`\`\`
+3. Si está bien, déjala normal.
+
+IMPORTANTE: 
+- Considera homófonos y errores comunes del transcriptor (ej: "mane" por "name").
+- Responde ÚNICAMENTE con la frase marcada.
+- NO añadidas explicaciones.
+
+Ejemplo esperado: My ~name~ \`\`\`is\`\`\` carlos`;
+
+        return await this.askAI(prompt, "Eres un experto en fonética inglesa y evaluación de pronunciación.");
+    }
 }
 
 module.exports = new AIService();
